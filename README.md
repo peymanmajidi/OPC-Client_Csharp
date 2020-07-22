@@ -3,14 +3,14 @@ OPC is a software interface standard that allows Windows programs to communicate
 
 ![shot](csharp_opc_client_03_e.png)
 
-```charp
-            // READ
-            var strNodeIds = new string[]
-            {
-                "ns=4;i=3",
-                "ns=4;i=4"
-            };
-            var values = tmpOpcUaClient.ReadValues(strNodeIds);
+```
+// READ
+var strNodeIds = new string[]
+{
+    "ns=4;i=3",
+    "ns=4;i=4"
+};
+var values = tmpOpcUaClient.ReadValues(strNodeIds);
 ```
 
 ![shot2](opc.jpeg)
