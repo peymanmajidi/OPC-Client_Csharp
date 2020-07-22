@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Markup;
 
@@ -14,8 +15,15 @@ namespace ConsoleOPC
         {
             var tmpOpcUaClient = new OpcUaClient();
             var ip = "opc.tcp://192.168.2.179";
+            Console.Write($"Try to connect '{ip}'...");
+
+            // CONNECT
             var endpoints = tmpOpcUaClient.GetEndpoints(ip);
-            Console.WriteLine("#\tEndpointDescription\tSecurityLevel\tSecurityMode\t");
+            Console.WriteLine($"\r\nConnected.");
+
+            // LIST ALL OF POSSIBLE END POINTS
+            Console.WriteLine("\r\n#\tEndpointDescription\tSecurityLevel\tSecurityMode\t");
+            Console.WriteLine("---------------------------------------------------------------");
             int i = 0;
             foreach (var endpoint in endpoints)
             {
@@ -23,18 +31,35 @@ namespace ConsoleOPC
                 Console.WriteLine(endpoint.SecurityPolicyUri);
             }
 
+
+            var is_connected = tmpOpcUaClient.Connect(endpoints[0], false, "", "");
+            Console.WriteLine("\r\nConnection Status: " + (is_connected ? "OK" : "Failed"));
+
+
             // READ
             var strNodeIds = new string[]
             {
-                "ns=3;s=\"TestData\".\"Static_1\""
+                "ns=4;i=3",
+                //"ns=4;i=4"
             };
             var values = tmpOpcUaClient.ReadValues(strNodeIds);
-            Console.WriteLine($"Read {strNodeIds[0]}:");
-            foreach (var value in values)
+
+            Console.WriteLine($"{values.Count()} items(s) found");
+            Console.WriteLine();
+            while (true)
             {
-                Console.WriteLine(value);
+
+                values = tmpOpcUaClient.ReadValues(strNodeIds);
+                foreach (var value in values)
+                {
+                    Console.Write("\r" + strNodeIds[0] + ": " + value);
+                }
+
             }
 
+
+
+            return;
             // WRITE
             strNodeIds = new string[]
             {
